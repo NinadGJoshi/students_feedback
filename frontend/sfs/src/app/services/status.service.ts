@@ -98,5 +98,24 @@ export class StatusService {
     return this.http.delete(url, httpOptions).pipe(catchError(err=> throwError(err)));
   }
 
+  private dataSource = [];
+  private studentFeedbackStatusList = [];
+
+  public getTeachersRatingData(): any {
+    return this.dataSource;
+  }
+
+  public setTeacherRatingData(data: any): void {
+    this.dataSource = data;
+  }
+
+  public getStudentsFeedbackData(): any {
+    return this.studentFeedbackStatusList;
+  }
+
+  public setStudentsFeedbackData(data: any): void {
+    this.studentFeedbackStatusList = data;
+  }
+
   constructor(private http: HttpClient) { }
 }

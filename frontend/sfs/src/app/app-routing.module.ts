@@ -14,6 +14,8 @@ import { AuthguardService } from './guards/authguard.service';
 import { FormGuardService } from './guards/form-guard.service';
 import { StudentRouteGuardService } from './guards/student-route-guard.service';
 import { AdminRouteGuardService } from './guards/admin-route-guard.service';
+import { RatingResolverService } from './resolvers/rating-resolver.service';
+import { FeebackStatusResolverService } from './resolvers/feeback-status-resolver.service';
 
 const routes: Routes = [
   {
@@ -33,7 +35,10 @@ const routes: Routes = [
       {
         path: 'students',
         component: FeedbackStatusComponent,
-        canActivate: [StudentRouteGuardService]
+        canActivate: [AdminRouteGuardService],
+        resolve: {
+          data: FeebackStatusResolverService
+        }
       },
       {
         path: 'form',
@@ -44,7 +49,10 @@ const routes: Routes = [
       {
         path: 'rating',
         component: RatingComponent,
-        canActivate: [AdminRouteGuardService]
+        canActivate: [AdminRouteGuardService],
+        resolve: {
+          data: RatingResolverService
+        }
       },
       {
         path: 'addTeachers',

@@ -34,16 +34,7 @@ export class RatingComponent implements OnInit {
   }
 
   private restoreData(): void{
-    this.loader.showLoader = true;
-    this.ss.getTeachersInfo(this.teachersInfoEndPoint).subscribe((data) => {
-      this.loader.showLoader = false;
-      this.dataSource = data;
-    },
-      (err) => {
-        this.loader.showLoader = false;
-        this.openSnackBar("Error occurred while fetching Teachers rating inforamation!", 'close')
-        // console.log(err);
-      });
+    this.dataSource = this.ss.getTeachersRatingData();
   }
 
   public openDialog(teacherId: number): void{

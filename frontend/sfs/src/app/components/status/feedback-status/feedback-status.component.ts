@@ -22,14 +22,14 @@ export interface PeriodicElement {
   styleUrls: ['./feedback-status.component.scss']
 })
 export class FeedbackStatusComponent implements OnInit {
-  public displayedColumns: string[] = ['rollNo','name','hasGivenFeedback', 'refresh'];
+  public displayedColumns: string[] = ['rollNo', 'name', 'hasGivenFeedback', 'refresh'];
   public dataSource: any;
   public searchText: string = '';
   private subs: Array<Subscription> = [];
   private readonly url: string = 'http://localhost:8000/students/';
 
   constructor(
-    private status: StatusService, 
+    private status: StatusService,
     public loader: LoaderService,
     public rs: RegisterService,
     public dialog: MatDialog,
@@ -38,26 +38,22 @@ export class FeedbackStatusComponent implements OnInit {
   ngOnInit(): void {
     this.restoreData();
   }
-  
+
   private restoreData(): void {
-    this.loader.showLoader = true;
-    this.subs.push(this.status.getStatus(this.url).subscribe(data=>{
-      this.loader.showLoader = false;
-      this.dataSource = data;
-    }));
+    this.dataSource = this.status.getStudentsFeedbackData();
   }
 
   public onRefresh(): void {
     this.restoreData();
   }
 
-  public clearText(input: any){
+  public clearText(input: any) {
     input.value = '';
     this.searchText = '';
   }
 
-  ngOnDestroy(){
-    this.subs.forEach(sub=> sub.unsubscribe());
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
   public openSnackBar(message: string, action: string) {
@@ -67,15 +63,15 @@ export class FeedbackStatusComponent implements OnInit {
     });
   }
 
-  public resetStudentPassword(rollNo: number){
+  public resetStudentPassword(rollNo: number) {
     const payload = {
       password: DEFAULT_PASSWORD
     }
     const sub = this.rs.changePassword(this.url + `/reset/${rollNo}`, payload).subscribe(
-      (data)=> {
+      (data) => {
         this.openSnackBar(data['message'], 'close');
       },
-      (err)=> {
+      (err) => {
         this.openSnackBar(err['message'], 'close');
       }
     )
@@ -83,7 +79,7 @@ export class FeedbackStatusComponent implements OnInit {
     this.subs.push(sub);
   }
 
-  public openDialog(rollNo: number): void{
+  public openDialog(rollNo: number): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         warningMsg: "Are you sure you that you want to delete Student's record?",
@@ -92,16 +88,16 @@ export class FeedbackStatusComponent implements OnInit {
     });
 
     this.subs.push(dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        if(result.confirmed){
+      if (result) {
+        if (result.confirmed) {
           this.loader.showLoader = true;
           const sub = this.status.deleteStudentRecord(this.url + `/student/${rollNo}`).subscribe(
-            (result)=>{
+            (result) => {
               this.loader.showLoader = false;
-              this.openSnackBar(result.message,'close');
+              this.openSnackBar(result.message, 'close');
               this.restoreData();
             },
-            (err)=>{
+            (err) => {
               this.loader.showLoader = false;
               this.openSnackBar(result.message, 'close');
             }
@@ -110,16 +106,17 @@ export class FeedbackStatusComponent implements OnInit {
         } else {
           this.loader.showLoader = false;
         }
-    }}));
+      }
+    }));
   }
 
   public resetStudentFeedback(rollNo: number): void {
-    const sub = this.status.resetStudentsFeedbackStatus(this.url+ `/reset/feedback/${rollNo}`).subscribe(
-      data=> {
+    const sub = this.status.resetStudentsFeedbackStatus(this.url + `/reset/feedback/${rollNo}`).subscribe(
+      data => {
         this.openSnackBar(data['message'], 'close');
         this.onRefresh();
       },
-      err=> {
+      err => {
         this.openSnackBar(err['message'], 'close');
       }
     )
